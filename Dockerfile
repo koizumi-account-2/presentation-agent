@@ -9,8 +9,8 @@ RUN yum install -y \
       python3-pip \
       python3-devel \
       libpq-devel
-
-RUN python3 -m ensurepip && pip3 install --upgrade pip
+# 、rpm でインストールされた pip を無理にアンインストールしようとせず、強制的に上書きインストールできます。
+RUN python3 -m ensurepip && pip3 install --no-cache-dir --upgrade --ignore-installed pip
 
 WORKDIR /app
 
