@@ -1,40 +1,28 @@
-# === Build stage ===
-FROM amazonlinux:2023 AS build
+# ベースイメージ
+FROM python:3.11-slim
 
-# 基本ツールと Python、PostgreSQL ビルド用依存をインストール
-RUN yum install -y \
-      gcc \
-      postgresql-devel \
-      python3 \
-      python3-pip \
-      python3-devel \
-      libpq-devel
-# 、rpm でインストールされた pip を無理にアンインストールしようとせず、強制的に上書きインストールできます。
-RUN python3 -m ensurepip && pip3 install --no-cache-dir --upgrade --ignore-installed pip
+# システムパッケージ（psycopg[binary] や orjson 用）をインストール
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
+# 作業ディレクトリを作成
 WORKDIR /app
 
-# 依存関係インストール
+# 依存ファイルをコピーしてインストール
 COPY app/requirements.txt .
-RUN pip3 install \
-  --platform manylinux2014_x86_64 \
-  --implementation cp \
-  --python-version 3.11 \
-  --only-binary=:all: \
-  --target=/app/python \
-  --upgrade \
-  --no-deps \
-  -r requirements.txt
 
+RUN pip install --no-cache-dir --upgrade pip \
+ && pip install --no-cache-dir -r requirements.txt
 
-# === Runtime stage ===
-FROM public.ecr.aws/lambda/python:3.11
+# アプリケーション本体をコピー
+COPY app/ .
 
-# /opt/python に置くと Lambda が認識してくれる（レイヤー相当）
-COPY --from=build /app/python /opt/python
+# ポート開放（FastAPIのデフォルトポート）
+EXPOSE 8000
 
-# Lambda 関数のコードをコピー
-COPY app/ /var/task/
-
-# Lambda handler のエントリーポイント
-CMD ["handler.lambda_handler"]
+# Uvicorn を起動（main.py の app オブジェクト）
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

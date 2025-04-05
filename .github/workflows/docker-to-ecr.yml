@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ECR_REGISTRY: 637423381395.dkr.ecr.ap-northeast-1.amazonaws.com
+      REPOSITORY_NAME: fastapi-agent
     permissions:
       id-token: write
       contents: read
@@ -35,8 +36,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t $ECR_REGISTRY/langgraph-lambda:latest .
+          docker build -t $ECR_REGISTRY/$REPOSITORY_NAME:latest .
 
       - name: Push Docker image to ECR
         run: |
-          docker push $ECR_REGISTRY/langgraph-lambda:latest
+          docker push $ECR_REGISTRY/$REPOSITORY_NAME:latest
