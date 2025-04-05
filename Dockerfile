@@ -16,7 +16,15 @@ WORKDIR /app
 
 # 依存関係インストール
 COPY app/requirements.txt .
-RUN pip3 install --no-cache-dir --target /app/python -r requirements.txt
+RUN pip3 install \
+  --platform manylinux2014_x86_64 \
+  --implementation cp \
+  --python-version 3.11 \
+  --only-binary=:all: \
+  --target=/app/python \
+  --upgrade \
+  --no-deps \
+  -r requirements.txt
 
 
 # === Runtime stage ===
