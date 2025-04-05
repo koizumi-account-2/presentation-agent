@@ -15,7 +15,6 @@ jobs:
 
     steps:
       - name: Set up ECR variables
-        description: "Set up ECR variables ここの値を変更します"
         run: |
           ECR_REGISTRY=637423381395.dkr.ecr.ap-northeast-1.amazonaws.com
       - name: Checkout code
