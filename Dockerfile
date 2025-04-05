@@ -1,20 +1,32 @@
-FROM public.ecr.aws/lambda/python:3.13
+# === Build stage ===
+FROM amazonlinux:2023 AS build
 
-# psycopg[binary] に必要な依存をインストール
-RUN yum install -y gcc postgresql-devel
+# 基本ツールと Python、PostgreSQL ビルド用依存をインストール
+RUN yum install -y \
+      gcc \
+      postgresql-devel \
+      python3 \
+      python3-pip \
+      python3-devel \
+      libpq-devel
 
-# ワーキングディレクトリ作成
-WORKDIR /var/task
+RUN python3 -m ensurepip && pip3 install --upgrade pip
 
-# 依存ライブラリをコピー（app 配下から）
+WORKDIR /app
+
+# 依存関係インストール
 COPY app/requirements.txt .
+RUN pip3 install --no-cache-dir --target /app/python -r requirements.txt
 
-# 依存をインストール（バイナリ版含む）
-RUN pip3 install --upgrade pip \
- && pip3 install --no-cache-dir -r requirements.txt
 
-# Lambda ソースコードをコピー
-COPY app/ .
+# === Runtime stage ===
+FROM public.ecr.aws/lambda/python:3.11
 
-# Lambda handler の指定（handler.py に lambda_handler 関数がある）
+# /opt/python に置くと Lambda が認識してくれる（レイヤー相当）
+COPY --from=build /app/python /opt/python
+
+# Lambda 関数のコードをコピー
+COPY app/ /var/task/
+
+# Lambda handler のエントリーポイント
 CMD ["handler.lambda_handler"]
