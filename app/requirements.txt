@@ -1,0 +1,19 @@
+# LangGraph
+langgraph
+langgraph-checkpoint
+langgraph-checkpoint-postgres
+
+# LangChain Ecosystem
+langchain-openai
+langchain-core
+langchain-community
+langchain-text-splitters
+
+
+# その他
+pydantic
+python-dotenv
+pypdf
+
+psycopg2-binary
+boto3
