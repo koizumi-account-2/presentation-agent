@@ -43,9 +43,24 @@ class InterviewState(BaseModel):
     thread_id: str = Field(...,description="リクエストのID")
     user_request: str = Field(...,description="ユーザーのリクエスト")
     common_background: str = Field(...,description="共通の背景")
-    persona_list: Annotated[list[Persona], operator.add] = Field(default_factory=list,description="ペルソナのリスト")
+    # persona_list: Annotated[list[Persona], operator.add] = Field(default_factory=list,description="ペルソナのリスト")
+    persona_list: list[Persona] = Field(default_factory=list, description="ペルソナのリスト")
     persona_confirmed: bool = Field(default=False,description="ペルソナのユーザによる確認")
     interview_result: Annotated[list[InterviewContent], operator.add]  = Field(default_factory=list,description="実施されたインタビューのリスト")
     iteration: int = Field(default=0,description="ペルソナ生成とインタビューの反復回数")
     is_satisfied: bool = Field(default=False,description="情報が充分かどうか")
     presentation: Presentation = Field(default=None,description="プレゼンテーションのコンテンツ")
+
+
+# self.graph.checkpointer.put(
+#     config={"configurable": {"thread_id": thread_id}},
+#     state={
+#         "thread_id": thread_id,
+#         "user_request": "some-request",
+#         "common_background": "some-background",
+#         "persona_list": persona_list,
+#         "persona_confirmed": True,
+#         ...
+#     },
+#     inputs={}, outputs={}
+# )

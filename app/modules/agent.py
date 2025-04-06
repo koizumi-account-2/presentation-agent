@@ -11,7 +11,7 @@ from modules.models import InterviewState,Persona,Presentation,PersonaList
 from langgraph.checkpoint.postgres import PostgresSaver
 
 from modules.config import get_db_url
-
+import datetime
 #checkpointer = PostgresSaver.from_conn_string(get_db_url())
 class PresentationAgent:
     def __init__(self, llm:ChatOpenAI,k:int|None=None,checkpointer:PostgresSaver|None=None):
@@ -38,16 +38,24 @@ class PresentationAgent:
         wait_confirm_state = self.graph.invoke(initial_state,config)
         return wait_confirm_state
 
-    def restart(self,thread_id:str,persona_list:list[Persona]) -> Presentation:
+    def restart(self,thread_id:str,persona_list:list[Persona],user_request:str,common_background:str) -> Presentation:
         # persona_listが空は許されない
         if len(persona_list) == 0:
             raise ValueError("persona_listが空です")
-        print("restart")
-        update_state = {
-            "persona_confirmed":True,
-            "persona_list":persona_list
-        }
-        final_state = self.graph.invoke(update_state,config = {"configurable": {"thread_id":thread_id}})
+        print("restart",persona_list)
+
+        snapshot = self.graph.get_state(config={"configurable": {"thread_id":thread_id}})
+        print("snapshot",snapshot)
+        self.graph.update_state(
+            config={"configurable": {"thread_id": thread_id}},
+            values={"persona_list": []}
+        )
+        self.graph.update_state(
+            config={"configurable": {"thread_id":thread_id}},
+            values={"persona_list":persona_list}
+        )
+
+        final_state = self.graph.invoke({},config = {"configurable": {"thread_id":thread_id}})
         return final_state
     
     def run(self,user_request:str,thread_id:str,persona_list:list[Persona],common_background:str) -> Presentation:
@@ -55,7 +63,7 @@ class PresentationAgent:
         if thread_id == "" or thread_id == None:
             return self.start(user_request,persona_list,common_background)
         else:
-            return self.restart(thread_id,persona_list)
+            return self.restart(thread_id,persona_list,user_request,common_background)
 
     def _create_graph(self) -> StateGraph:
         workflow = StateGraph(InterviewState)

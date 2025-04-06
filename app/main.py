@@ -34,25 +34,24 @@ async def suggest(request: Request,user_info = Depends(verify_jwt_from_cookie)):
         # common_background = body["common_background"]
         user_background = body["user_background"]
         state = body["state"]
-
-        print("user_background",user_background)
         print("state",state)
         agent = PresentationAgent(model,k=3,checkpointer=checkpointer)
         result = agent.run(user_background,state["thread_id"],state["persona_list"],common_background=state["common_background"])
         fake_result ={
             "thread_id": "b315d660-ee1d-4f6f-bd41-6648fe8bb9e1",
+            "common_background": "ITベンチャー企業に勤めています",
             "user_request": "",
             "persona_list": [
                 {
-                    "name": "佐藤健太",
+                    "name": "佐藤健太AAAA",
                     "background": "30歳男性。AI開発部門で働くエンジニア。大学でコンピュータサイエンスを専攻し、5年間の経験を持つ。新しい技術に対する好奇心が強く、特に機械学習に興味を持っている。"
                 },
                 {
-                    "name": "山田美咲",
+                    "name": "山田美咲BBBB",
                     "background": "25歳女性。マーケティング部門で働くデジタルマーケティングスペシャリスト。AIの活用によるデータ分析に関心があり、SNSを通じたプロモーション戦略を担当している。最近、AIツールを使ったキャンペーンの効果測定に取り組んでいる。"
                 },
                 {
-                    "name": "鈴木一郎",
+                    "name": "鈴木一郎CCCC",
                     "background": "45歳男性。経営戦略部門のマネージャー。AIのビジネス活用に関する豊富な知識を持ち、企業の成長戦略を策定する役割を担っている。技術的なバックグラウンドはないが、AIのトレンドに敏感で、業界の動向を常に追っている。"
                 }
             ],
