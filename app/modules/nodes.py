@@ -5,11 +5,11 @@ from modules.models import Persona,PersonaList,InterviewResult,InterviewContent,
 
 # ペルソナの生成
 class PersonaGenerator:
-    def __init__(self,llm:ChatOpenAI, common_background:str,k:int=3):
+    def __init__(self,llm:ChatOpenAI,k:int=3):
         self.llm = llm.with_structured_output(PersonaList)
         self.k = k
-        self.common_background = common_background
-    def run(self,user_request:str) -> PersonaList:
+
+    def run(self,user_request:str,common_background:str) -> PersonaList:
         prompt = ChatPromptTemplate.from_messages(
             [
                 ("system","あなたはユーザインタビュー用の多様なペルソナを作成する専門家です"),
@@ -25,7 +25,7 @@ class PersonaGenerator:
                  
                 共通の背景：
                 ```
-                {self.common_background}
+                {common_background}
                 ```
                 """)
             ]

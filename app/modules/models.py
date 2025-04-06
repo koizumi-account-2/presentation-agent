@@ -40,8 +40,9 @@ class Presentation(BaseModel):
 
 # AIエージェントのステート
 class InterviewState(BaseModel):
-    request_id: str = Field(...,description="リクエストのID")
+    thread_id: str = Field(...,description="リクエストのID")
     user_request: str = Field(...,description="ユーザーのリクエスト")
+    common_background: str = Field(...,description="共通の背景")
     persona_list: Annotated[list[Persona], operator.add] = Field(default_factory=list,description="ペルソナのリスト")
     persona_confirmed: bool = Field(default=False,description="ペルソナのユーザによる確認")
     interview_result: Annotated[list[InterviewContent], operator.add]  = Field(default_factory=list,description="実施されたインタビューのリスト")

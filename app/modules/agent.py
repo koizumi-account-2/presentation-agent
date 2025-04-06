@@ -14,10 +14,10 @@ from modules.config import get_db_url
 
 #checkpointer = PostgresSaver.from_conn_string(get_db_url())
 class PresentationAgent:
-    def __init__(self, llm:ChatOpenAI,common_background:str,k:int|None=None,checkpointer:PostgresSaver|None=None):
+    def __init__(self, llm:ChatOpenAI,k:int|None=None,checkpointer:PostgresSaver|None=None):
         self.llm = llm
         self.persona_list = []
-        self.persona_generator = PersonaGenerator(llm=llm,common_background=common_background,k=k)
+        self.persona_generator = PersonaGenerator(llm=llm,k=k)
         self.interview_conductor = InterviewConductor(llm=llm)
         self.information_evaluator = InformationEvaluator(llm=llm)
         self.presentation_generator = PresentationGenerator(llm=llm)
@@ -29,12 +29,12 @@ class PresentationAgent:
 
 
 
-    def start(self,user_request:str,persona_list:list[Persona]) -> str:
+    def start(self,user_request:str,persona_list:list[Persona],common_background:str) -> str:
         print("start")
         thread_id = str(uuid.uuid4())
         self.persona_list = persona_list
         config = {"configurable": {"thread_id":thread_id}}
-        initial_state = InterviewState(user_request=user_request,persona_list=persona_list,request_id=thread_id)
+        initial_state = InterviewState(user_request=user_request,common_background=common_background,persona_list=persona_list,thread_id=thread_id)
         wait_confirm_state = self.graph.invoke(initial_state,config)
         return wait_confirm_state
 
@@ -50,10 +50,10 @@ class PresentationAgent:
         final_state = self.graph.invoke(update_state,config = {"configurable": {"thread_id":thread_id}})
         return final_state
     
-    def run(self,user_request:str,thread_id:str,persona_list:list[Persona]) -> Presentation:
+    def run(self,user_request:str,thread_id:str,persona_list:list[Persona],common_background:str) -> Presentation:
         print("thread_id",thread_id)
         if thread_id == "" or thread_id == None:
-            return self.start(user_request,persona_list)
+            return self.start(user_request,persona_list,common_background)
         else:
             return self.restart(thread_id,persona_list)
 
@@ -101,7 +101,7 @@ class PresentationAgent:
 
     def _generate_persona(self,state: InterviewState) -> dict[str,Any]:
         # ペルソナリストが与えられている場合にはそれを使用し、与えられていない場合には新しく生成する
-        new_persona_list:PersonaList = self.persona_list if len(self.persona_list) > 0 else self.persona_generator.run(state.user_request)
+        new_persona_list:PersonaList = self.persona_list if len(self.persona_list) > 0 else self.persona_generator.run(state.user_request,state.common_background)
         print("_generate_persona")
         return {
             "persona_list":new_persona_list.personas,
