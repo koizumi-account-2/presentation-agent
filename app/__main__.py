@@ -57,7 +57,7 @@ def main():
         #     user_request="AWSについての勉強会を開きますが、どのようなコンテンツが良いでしょうか"
         # )
         checkpointer.setup()
-        presentation_agent = PresentationAgent(model, common_background="私はITベンチャー企業に所属しています",k=3,checkpointer=checkpointer)
+        presentation_agent = PresentationAgent(model,k=3,checkpointer=checkpointer)
         if(args.id):
             list = personas.personas
         else:
@@ -66,7 +66,7 @@ def main():
             else:
                 list = []
         
-        result = presentation_agent.run(user_request="AWSについての勉強会を開きますが、どのようなコンテンツが良いでしょうか",thread_id=args.id,persona_list=list)
+        result = presentation_agent.run(user_request="AWSについての勉強会を開きますが、どのようなコンテンツが良いでしょうか",common_background="ITベンチャー企業に勤めています",thread_id=args.id,persona_list=list)
         print(result)
 if __name__ == "__main__":
     main()
