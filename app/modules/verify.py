@@ -18,7 +18,7 @@ def verify_jwt_from_cookie(request: Request):
     }
 
     decoded_encryption_key = b64decode(encryption_key.encode("utf-8"))
-    print("request",request)
+    print("request",str(request.cookies))
     jwt_token = request.cookies.get("jwt")  # 👈 Cookie から取得
     print("jwt_token",jwt_token)
     if not jwt_token:
