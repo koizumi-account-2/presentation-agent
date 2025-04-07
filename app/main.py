@@ -31,8 +31,7 @@ async def health():
     return {"message": "OK"}
 
 @app.post("/presentation")
-async def suggest(request: Request,user_info = Depends(verify_jwt_from_cookie)):
-    print("user_info",user_info)
+async def suggest(request: Request):
     with PostgresSaver.from_conn_string(get_db_url()) as checkpointer:
         checkpointer.setup()
         body = await request.json()
