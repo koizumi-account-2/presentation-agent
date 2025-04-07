@@ -8,9 +8,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from modules.verify import verify_jwt_from_cookie
 app = FastAPI()
 
+origins = [
+    "http://localhost:5173",  # ローカル用
+    "https://your-react-app.com"  # 本番用（必要に応じて）
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # セキュリティのため本番では特定のドメインに限定する
+    allow_origins=origins,  # セキュリティのため本番では特定のドメインに限定する
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
