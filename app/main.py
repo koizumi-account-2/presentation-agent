@@ -22,15 +22,15 @@ app.add_middleware(
 )
 
 
-@app.get("/")
+@app.get("/api/")
 async def root():
     return {"message": "Hello World"}
 
-@app.get("/health")
+@app.get("/api/health")
 async def health():
     return {"message": "OK"}
 
-@app.post("/presentation")
+@app.post("/api/presentation")
 async def suggest(request: Request):
     with PostgresSaver.from_conn_string(get_db_url()) as checkpointer:
         checkpointer.setup()
