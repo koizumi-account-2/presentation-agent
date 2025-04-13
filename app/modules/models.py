@@ -42,7 +42,7 @@ class Presentation(BaseModel):
 class InterviewState(BaseModel):
     thread_id: str = Field(...,description="リクエストのID")
     user_request: str = Field(...,description="ユーザーのリクエスト")
-    common_background: str = Field(...,description="共通の背景")
+    common_background: str = Field(...,description="プレゼンテーション相手として仮装するペルソナ共通の背景")
     # persona_list: Annotated[list[Persona], operator.add] = Field(default_factory=list,description="ペルソナのリスト")
     persona_list: list[Persona] = Field(default_factory=list, description="ペルソナのリスト")
     persona_confirmed: bool = Field(default=False,description="ペルソナのユーザによる確認")

@@ -43,10 +43,10 @@ jobs:
       - name: Push Docker image to ECR
         run: |
           docker push $ECR_REGISTRY/$REPOSITORY_NAME:latest
-      
-      - name: Force new deployment on ECS
-        run: |
-          aws ecs update-service \
-            --cluster $CLUSTER_NAME \
-            --service $SERVICE_NAME \
-            --force-new-deployment
+
+      # - name: Force new deployment on ECS
+      #   run: |
+      #     aws ecs update-service \
+      #       --cluster $CLUSTER_NAME \
+      #       --service $SERVICE_NAME \
+      #       --force-new-deployment

@@ -60,10 +60,12 @@ class PresentationAgent:
     
     def run(self,user_request:str,thread_id:str,persona_list:list[Persona],common_background:str) -> Presentation:
         print("thread_id",thread_id)
+        print("user_request",user_request)
+        print("common_background",common_background)
         if thread_id == "" or thread_id == None:
-            return self.start(user_request,persona_list,common_background)
+            return self.start(user_request=user_request,persona_list=persona_list,common_background=common_background)
         else:
-            return self.restart(thread_id,persona_list,user_request,common_background)
+            return self.restart(thread_id=thread_id,persona_list=persona_list,user_request=user_request,common_background=common_background)
 
     def _create_graph(self) -> StateGraph:
         workflow = StateGraph(InterviewState)
