@@ -30,12 +30,11 @@ async def suggest(request: Request):
     with PostgresSaver.from_conn_string(get_db_url()) as checkpointer:
         checkpointer.setup()
         body = await request.json()
-        # common_background = body["common_background"]
         user_background = body["user_background"]
         state = body["state"]
         print("state",state)
         agent = PresentationAgent(model,k=3,checkpointer=checkpointer)
-        result = agent.run(user_background,state["thread_id"],state["persona_list"],common_background=state["common_background"])
+        result = agent.run(user_request=state["user_request"],thread_id=state["thread_id"],persona_list=state["persona_list"],common_background=state["common_background"])
         fake_result ={
             "thread_id": "b315d660-ee1d-4f6f-bd41-6648fe8bb9e1",
             "common_background": "ITベンチャー企業に勤めています fake",
